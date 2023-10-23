@@ -1,6 +1,7 @@
 from PIL import Image
 import sys
 import math
+import copy
 import argparse
 
 def computeGaussian(x, y, sigma):
@@ -50,19 +51,19 @@ def doubleArrayToList(array):
 
 def processImage(path, kernel, radius):
     try:
-        img = Image.open(path)
+        img = Image.open(path).convert('RGB')
         width, height = img.size
         imageData = listToDoubleArray(list(img.getdata()), width, height)
-        newImageData = 
+        newImageData = copy.deepcopy(imageData)
 
-        for x in range(width - radius):
-            for y in range(height - radius):
+        for x in range(radius, width - radius):
+            for y in range(radius, height - radius):
                 red = 0
                 green = 0
                 blue = 0
 
-                for kernelX in range(-radius, radius + 1):
-                    for kernelY in range(-radius, radius + 1):
+                for kernelX in range(-radius, radius):
+                    for kernelY in range(-radius, radius):
                         kernalValue = kernel[kernelX + radius][kernelY + radius]
                         red += imageData[x - kernelX][y - kernelY][0] * kernalValue
                         green += imageData[x - kernelX][y - kernelY][1] * kernalValue
@@ -91,7 +92,6 @@ def main():
     args = getArgs()
     sigma = max(args.radius / 2, 1)
     kernel = getKernel(args.radius, sigma)
-    printKernel(kernel)
     processImage(args.image, kernel, args.radius)
     
 main()
