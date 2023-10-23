@@ -2,6 +2,7 @@ from PIL import Image
 import math
 import copy
 import argparse
+import matplotlib.pyplot as plt
 
 def computeGaussian(x, y, sigma):
     left = (1 / (2 * math.pi * sigma**2))
@@ -50,10 +51,13 @@ def doubleArrayToList(array):
 
 def processImage(path, kernel, radius):
     try:
-        img = Image.open(path).convert('RGB')
+        img = Image.open(path).convert('RGBA')
         width, height = img.size
         imageData = listToDoubleArray(list(img.getdata()), height, width)
         newImageData = copy.deepcopy(imageData)
+
+        plt.subplot(2, 1, 1)
+        plt.imshow(img)
 
         for x in range(radius, height - radius):
             for y in range(radius, width - radius):
@@ -70,8 +74,11 @@ def processImage(path, kernel, radius):
                 newImageData[x][y] = (int(red), int(green), int(blue))
         
         img.putdata(doubleArrayToList(newImageData))
-        img.save("blurred.png")
-    except Exception as prin:
+
+        plt.subplot(2, 1, 2)
+        plt.imshow(img)
+        plt.show()
+    except:
         print("Error: error while processing image")
         return
 
