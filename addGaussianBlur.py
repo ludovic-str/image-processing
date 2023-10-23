@@ -1,5 +1,4 @@
 from PIL import Image
-import sys
 import math
 import copy
 import argparse
@@ -20,9 +19,9 @@ def getKernel(radius, sigma):
     kernel = []
     kernelCurrentValue = 0
 
-    for x in range(0, 2 * radius + 1):
+    for x in range(-radius, radius + 1):
         row = []
-        for y in range(0, 2 * radius + 1):
+        for y in range(-radius, radius + 1):
             kernelCurrentValue = computeGaussian(x, y, sigma)
             sum += kernelCurrentValue
             row.append(kernelCurrentValue)
@@ -53,11 +52,11 @@ def processImage(path, kernel, radius):
     try:
         img = Image.open(path).convert('RGB')
         width, height = img.size
-        imageData = listToDoubleArray(list(img.getdata()), width, height)
+        imageData = listToDoubleArray(list(img.getdata()), height, width)
         newImageData = copy.deepcopy(imageData)
 
-        for x in range(radius, width - radius):
-            for y in range(radius, height - radius):
+        for x in range(radius, height - radius):
+            for y in range(radius, width - radius):
                 red = 0
                 green = 0
                 blue = 0
@@ -69,12 +68,11 @@ def processImage(path, kernel, radius):
                         green += imageData[x - kernelX][y - kernelY][1] * kernalValue
                         blue += imageData[x - kernelX][y - kernelY][2] * kernalValue
                 newImageData[x][y] = (int(red), int(green), int(blue))
-                
         
         img.putdata(doubleArrayToList(newImageData))
         img.save("blurred.png")
     except Exception as prin:
-        print(prin)
+        print("Error: error while processing image")
         return
 
 def checkKernelValidity(kernel):
