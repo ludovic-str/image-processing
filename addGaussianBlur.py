@@ -78,8 +78,8 @@ def processImage(path, kernel, radius):
         plt.subplot(2, 1, 2)
         plt.imshow(img)
         plt.show()
-    except:
-        print("Error: error while processing image")
+    except Exception as e:
+        print(e)
         return
 
 def checkKernelValidity(kernel):
